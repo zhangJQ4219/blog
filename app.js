@@ -1,5 +1,6 @@
 let express = require('express');
 let path = require('path');
+let fs = require('fs')
 // 路由配置入口
 let indexRouter = require('./routes/index');
 let articleRouter = require('./routes/article');
