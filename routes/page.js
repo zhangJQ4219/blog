@@ -68,7 +68,7 @@ router.post('/editPage', function (req, res, next) {
     data: ''
   }
   if (req.body.img !== '') {
-    req.body.avatorImg = req.body.img.response.data
+    req.body.indexImg = req.body.img.response.data
   }
   console.log(req.body)
   // imgUrl = req.body.img.response.data
