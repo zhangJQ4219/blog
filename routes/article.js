@@ -19,13 +19,13 @@ let upload = multer({ storage: storage })
 
 // 上传
 router.post('/upload', upload.single('file'), function (req, res, next) {
-  res.send({ code: '200', msg: 'success', data: (req.headers.origin + '/' + req.file.path).replace(/\\/g, "\/") })
+  res.send({ code: '200', msg: 'success', data: req.file.path.replace(/\\/g, "\/") })
 })
 
 // 删除图片
 router.post('/removeImg', function (req, res, next) {
-  let url = req.body.response.data.substring(req.headers.origin.length)
-  fs.unlink('.' + url, (err) => {
+  let url = req.body.response.data
+  fs.unlink('./' + url, (err) => {
     if (err) {
       res.send({ code: '500', msg: 'failure' })
     } else {

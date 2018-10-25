@@ -18,12 +18,13 @@ let upload = multer({ storage: storage })
 
 // 上传
 router.post('/upload', upload.single('file'), function (req, res, next) {
-  res.send({ code: '200', msg: 'success', data: (req.headers.origin + '/' + req.file.path).replace(/\\/g, "\/") })
+  res.send({ code: '200', msg: 'success', data: req.file.path.replace(/\\/g, "\/") })
 })
 
 // 删除图片
 router.post('/removeImg', function (req, res, next) {
-  fs.unlink('.' + req.body.response.data, (err) => {
+  console.log(req.body.response.data)
+  fs.unlink('./' + req.body.response.data, (err) => {
     if (err) {
       res.send({ code: '500', msg: 'failure' })
     } else {
@@ -55,35 +56,29 @@ router.post('/editUserInfo', function (req, res, next) {
     data: ''
   }
   console.log(req.body)
-  if (req.body.img === '') {
-    result.code = 200
-    result.msg = 'success'
-    result.data = '未选择任何图片'
-    res.send(result)
-  } else {
-    req.body.avatorImg = '/upload/' + req.body.img.response.data
-    console.log(req.body)
-    Userinfo.update({ 'user': 'zhang' }, { $set: req.body }, (err, raw) => {
-      if (!err) {
-        if (raw.nModified > 0) {
-          result.code = 200
-          result.msg = 'success'
-          result.data = '修改成功'
-          res.send(result)
-        } else {
-          result.code = 200
-          result.msg = 'success'
-          result.data = '修改shib'
-          res.send(result)
-        }
+  if (req.body.img !== '') {
+    req.body.avatorImg = req.body.img.response.data
+  }
+  Userinfo.update({ 'user': 'zhang' }, { $set: req.body }, (err, raw) => {
+    if (!err) {
+      if (raw.nModified > 0) {
+        result.code = 200
+        result.msg = 'success'
+        result.data = '修改成功'
+        res.send(result)
       } else {
-        result.code = 500
-        result.msg = 'failure'
-        result.data = '系统繁忙'
+        result.code = 200
+        result.msg = 'success'
+        result.data = '修改shib'
         res.send(result)
       }
-    })
-  }
+    } else {
+      result.code = 500
+      result.msg = 'failure'
+      result.data = '系统繁忙'
+      res.send(result)
+    }
+  })
 });
 
 module.exports = router;

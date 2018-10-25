@@ -19,13 +19,13 @@ let upload = multer({ storage: storage })
 
 // 上传
 router.post('/upload', upload.single('file'), function (req, res, next) {
-  res.send({ code: '200', msg: 'success', data: (req.headers.origin + '/' + req.file.path).replace(/\\/g, "\/")})
+  res.send({ code: '200', msg: 'success', data: req.file.path.replace(/\\/g, "\/")})
 })
 
 // 删除图片
 router.post('/removeImg', function (req, res, next) {
-  let url = req.body.response.data.substring(req.headers.origin.length)
-  fs.unlink('.' + url,(err)=>{
+  let url = req.body.response.data
+  fs.unlink('./' + url,(err)=>{
     if (err) {
       res.send({ code: '500', msg: 'failure' })
     } else {
@@ -44,12 +44,15 @@ router.post('/removeImg', function (req, res, next) {
 
 // 获取页面元素
 router.get('/getPage', function (req, res, next) {
+  let url = req.headers.referer
+  console.log(url)
   let result = {
     code: null,
     msg: '',
     data: ''
   }
   Page.findOne({},  (err, docs) => {
+    // docs.indexImg = url + docs.indexImg
     result.code = 200
     result.msg = 'success'
     result.data = docs
@@ -64,7 +67,9 @@ router.post('/editPage', function (req, res, next) {
     msg: '',
     data: ''
   }
-  req.body.indexImg = req.body.img.response.data
+  if (req.body.img !== '') {
+    req.body.avatorImg = req.body.img.response.data
+  }
   console.log(req.body)
   // imgUrl = req.body.img.response.data
   Page.update({ '_id':'5bc40b9b3eb2e0233ce986e4'}, { $set: req.body}, (err, raw) => {
